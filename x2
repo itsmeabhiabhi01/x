@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConnectVerse - Future of Social Networking</title>
+    <style>
+        :root {
+            --bg-color: #000;
+            --text-color: #fff;
+            --primary-color: #1d9bf0;
+            --secondary-color: #16181c;
+            --border-color: #2f3336;
+            --card-color: #16181c;
+            --hover-color: #181818;
+            --muted-text: #71767b;
+            --story-ring: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            --success-color: #00ba7c;
+            --danger-color: #f91880;
+            --warning-color: #ffd400;
+        }
+
+        .light-mode {
+            --bg-color: #fff;
+            --text-color: #000;
+            --secondary-color: #f7f9f9;
+            --border-color: #e0e0e0;
+            --card-color: #f7f9f9;
+            --hover-color: #f0f0f0;
+            --muted-text: #536471;
+            --story-ring: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+        
+        /* Left sidebar */
+        .sidebar {
+            width: 275px;
+            padding: 10px;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+            overflow-y: auto;
+        }
+        
+        .logo {
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo svg {
+            width: 28px;
+            height: 28px;
+            fill: var(--primary-color);
+            margin-right: 10px;
+        }
+        
+        .logo-text {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin: 4px 0;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            width: 100%;
+        }
+        
+        .nav-item:hover {
+            background-color: var(--hover-color);
+        }
+        
+        .nav-item.active {
+            font-weight: bold;
+        }
+        
+        .nav-item svg {
+            width: 26px;
+            height: 26px;
+            margin-right: 16px;
+            fill: var(--text-color);
+        }
+        
+        .create-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 9999px;
+            padding: 16px 32px;
+            font-size: 17px;
+            font-weight: bold;
+            margin-top: 10px;
+            cursor: pointer;
+            width: 90%;
+            transition: background-color 0.2s;
+        }
+        
+        .create-btn:hover {
+            background-color: #1a8cd8;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            margin-top: auto;
+            padding: 12px;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            width: calc(100% - 24px);
+        }
+        
+        .user-profile:hover {
+            background-color: var(--hover-color);
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+            background-color: #333;
+            background-image: url('https://randomuser.me/api/portraits/men/1.jpg');
+            background-size: cover;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-weight: bold;
+            font-size: 15px;
+        }
+        
+        .user-handle {
+            color: var(--muted-text);
+            font-size: 15px;
+        }
+        
+        .theme-toggle {
+            position: absolute;
+            bottom: 80px;
+            left: 20px;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 20px;
+        }
+        
+        .theme-toggle:hover {
+            background-color: var(--hover-color);
+        }
+        
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            fill: var(--text-color);
+        }
+        
+        /* Main Content - Instagram-like feed with Twitter elements */
+        .main-content {
+            flex: 1;
+            max-width: 600px;
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+        }
+        
+        .header {
+            position: sticky;
+            top: 0;
+            background-color: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(12px);
+            z-index: 10;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .header-icons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .header-icon {
+            width: 24px;
+            height: 24px;
+            fill: var(--text-color);
+            cursor: pointer;
+        }
+        
+        .stories {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        
+        .story {
+            display: inline-block;
+            width: 80px;
+            margin-right: 15px;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .story-avatar {
+            width: 66px;
+            height: 66px;
+            border-radius: 50%;
+            background-color: #333;
+            margin: 0 auto;
+            background-size: cover;
+            padding: 3px;
+            background-clip: content-box;
+            border: 2px solid transparent;
+            position: relative;
+        }
+        
+        .story-avatar::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: var(--story-ring);
+            border-radius: 50%;
+            z-index: -1;
+        }
+        
+        .story-avatar.unseen::after {
+            content: '+';
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            width: 20px;
+            height: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            border: 2px solid var(--bg-color);
+        }
+        
+        .story-username {
+            margin-top: 5px;
+            font-size: 12px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            display: inline-block;
+        }
+        
+        .create-post {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .post-form {
+            display: flex;
+        }
+        
+        .post-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: #333;
+            margin-right: 12px;
+            background-image: url('https://randomuser.me/api/portraits/men/1.jpg');
+            background-size: cover;
+            border: 2px solid var(--story-ring);
+            background-clip: padding-box;
+        }
+        
+        .post-input {
+            flex: 1;
+        }
+        
+        .post-input textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 16px;
+            resize: none;
+            outline: none;
+            padding: 12px 0;
+            min-height: 60px;
+            font-family: inherit;
+        }
+        
+        .post-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .post-icons {
+            display: flex;
+        }
+        
+        .post-icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-right: 4px;
+            cursor: pointer;
+            color: var(--primary-color);
+            transition: background-color 0.2s;
+        }
+        
+        .post-icon:hover {
+            background-color: #1d9bf011;
+        }
+        
+        .post-submit {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 9999px;
+            padding: 8px 16px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            opacity: 0.5;
+        }
+        
+        .post-submit.active {
+            opacity: 1;
+        }
+        
+        /* Posts - Instagram style with Twitter interactions */
+        .posts {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .post-card {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        
+        .post-header {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+        }
+        
+        .post-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 12px;
+            background-color: #333;
+            background-size: cover;
+            border: 2px solid var(--story-ring);
+            background-clip: padding-box;
+        }
+        
+        .post-user {
+            flex: 1;
+        }
+        
+        .post-name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .post-location {
+            font-size: 12px;
+            color: var(--muted-text);
+        }
+        
+        .post-more {
+            width: 24px;
+            height: 24px;
+            fill: var(--text-color);
+            cursor: pointer;
+        }
+        
+        .post-image {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background-color: #333;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .post-video {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background-color: #000;
+            position: relative;
+        }
+        
+        .video-play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background-color: rgba(0,0,0,0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .video-play-button svg {
+            width: 30px;
+            height: 30px;
+            fill: white;
+        }
+        
+        .post-actions {
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .post-action {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+        
+        .post-action svg {
+            width: 24px;
+            height: 24px;
+            margin-right: 6px;
+            fill: var(--text-color);
+        }
+        
+        .post-action.like svg {
+            fill: var(--danger-color);
+        }
+        
+        .post-action.comment svg {
+            fill: var(--muted-text);
+        }
+        
+        .post-action.share svg {
+            fill: var(--primary-color);
+        }
+        
+        .post-action.save svg {
+            fill: var(--warning-color);
+        }
+        
+        .post-likes {
+            font-weight: bold;
+            font-size: 14px;
+            padding: 0 16px;
+            margin-bottom: 8px;
+        }
+        
+        .post-caption {
+            padding: 0 16px;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .post-caption a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .post-comments {
+            padding: 0 16px;
+            color: var(--muted-text);
+            font-size: 14px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        
+        .post-time {
+            padding: 0 16px;
+            color: var(--muted-text);
+            font-size: 10px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        
+        .add-comment {
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            margin-top: 8px;
+        }
+        
+        .comment-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            padding: 10px 0;
+            outline: none;
+        }
+        
+        .comment-post {
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            opacity: 0.3;
+        }
+        
+        .comment-post.active {
+            opacity: 1;
+        }
+        
+        /* Right sidebar - Twitter-like with additional features */
+        .right-sidebar {
+            width: 350px;
+            padding: 16px;
+            overflow-y: auto;
+        }
+        
+        .search-box {
+            background-color: var(--secondary-color);
+            border-radius: 9999px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .search-box svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--muted-text);
+            margin-right: 8px;
+        }
+        
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 15px;
+            outline: none;
+            width: 100%;
+        }
+        
+        /* Audio Rooms - Clubhouse style */
+        .audio-rooms {
+            background-color: var(--secondary-color);
+            border-radius: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .section-header {
+            padding: 16px;
+            font-size: 20px;
+            font-weight: bold;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .see-all {
+            color: var(--primary-color);
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .room-item {
+            padding: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .room-item:last-child {
+            border-bottom: none;
+        }
+        
+        .room-item:hover {
+            background-color: var(--hover-color);
+        }
+        
+        .room-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .room-participants {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .room-avatars {
+            display: flex;
+            margin-right: 12px;
+        }
+        
+        .room-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #333;
+            margin-right: -8px;
+            border: 2px solid var(--secondary-color);
+            background-size: cover;
+        }
+        
+        .room-avatar:nth-child(1) {
+            background-image: url('https://randomuser.me/api/portraits/women/1.jpg');
+            z-index: 3;
+        }
+        
+        .room-avatar:nth-child(2) {
+            background-image: url('https://randomuser.me/api/portraits/men/2.jpg');
+            z-index: 2;
+        }
+        
+        .room-avatar:nth-child(3) {
+            background-image: url('https://randomuser.me/api/portraits/women/3.jpg');
+            z-index: 1;
+        }
+        
+        .room-count {
+            color: var(--muted-text);
+            font-size: 14px;
+        }
+        
+        .room-topic {
+            font-size: 14px;
+            color: var(--muted-text);
+            margin-bottom: 8px;
+        }
+        
+        .join-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 9999px;
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        /* Events - Facebook style */
+        .events {
+            background-color: var(--secondary-color);
+            border-radius: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .event-item {
+            padding: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .event-item:last-child {
+            border-bottom: none;
+        }
+        
+        .event-item:hover {
+            background-color: var(--hover-color);
+        }
+        
+        .event-date {
+            color: var(--primary-color);
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .event-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .event-location {
+            display: flex;
+            align-items: center;
+            color: var(--muted-text);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .event-location svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 4px;
+            fill: var(--muted-text);
+        }
+        
+        .event-interested {
+            display: flex;
+            align-items: center;
+            color: var(--muted-text);
+            font-size: 14px;
+        }
+        
+        .event-interested svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 4px;
+            fill: var(--muted-text);
+        }
+        
+        /* Who to follow - Twitter style */
+        .follow-item {
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .follow-item:last-child {
+            border-bottom: none;
+        }
+        
+        .follow-item:hover {
+            background-color: var(--hover-color);
+        }
+        
+        .follow-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: #333;
+            margin-right: 12px;
+            background-size: cover;
+        }
+        
+        .follow-info {
+            flex: 1;
+        }
+        
+        .follow-name {
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+        
+        .follow-username {
+            color: var(--muted-text);
+            margin-bottom: 2px;
+        }
+        
+        .follow-btn {
+            background-color: white;
+            color: black;
+            border: none;
+            border-radius: 9999px;
+            padding: 8px 16px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        /* Trending - Twitter style */
+        .trending-item {
+            padding: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .trending-item:last-child {
+            border-bottom: none;
+        }
+        
+        .trending-item:hover {
+            background-color: var(--hover-color);
+        }
+        
+        .trending-category {
+            color: var(--muted-text);
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+        
+        .trending-name {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        
+        .trending-count {
+            font-size: 13px;
+            color: var(--muted-text);
+        }
+        
+        /* Footer */
+        .footer {
+            padding: 16px;
+            color: var(--muted-text);
+            font-size: 13px;
+        }
+        
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 4px;
+        }
+        
+        .footer-link {
+            margin-right: 12px;
+            margin-bottom: 4px;
+            cursor: pointer;
+        }
+        
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: var(--bg-color);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            margin-bottom: 20px;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 9999px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .modal-btn.primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .modal-btn.secondary {
+            background-color: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .right-sidebar {
+                width: 300px;
+            }
+        }
+        
+        @media (max-width: 1000px) {
+            .right-sidebar {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .sidebar {
+                width: auto;
+            }
+            
+            .nav-item span {
+                display: none;
+            }
+            
+            .create-btn {
+                width: auto;
+                padding: 16px;
+                border-radius: 50%;
+            }
+            
+            .create-btn span {
+                display: none;
+            }
+            
+            .user-info {
+                display: none;
+            }
+            
+            .logo-text {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Left Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <g><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></g>
+            </svg>
+            <span class="logo-text">ConnectVerse</span>
+        </div>
+        
+        <div class="nav-item active">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <g><path d="M12 1.696L.622 8.807l1.06 1.696L3 9.679V19.5C3 20.881 4.119 22 5.5 22h13c1.381 0 2.5-1.119 2.5-2.5V9.679l1.318.824 1.06-1.696L12 1.696zM12 16.5c-1.933 0-3.5-1.567-3.5-3.5s1.567-3.5 3.5-3.5 3.5 1.567 3.5 3.5-1.567 3.5-3.5 3.5z"></path></g>
+            </svg>
+            <span>Home</span>
+        </div>
+        
+        <div class="nav-item">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <g><path d="M10.25 3.75c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.795 0 3.419-.726 4.596-1.904 1.178-1.177 1.904-2.801 1.904-4.596 0-3.59-2.91-6.5-6.5-6.5zm-8.5 6.5c0-4.694 3.806-8.5 8.5-8.5s8.5 3.806 8.5 8.5c0 1.986-.682 3.815-1.824 5.262l4.781 4.781-1.414 1.414-4.781-4.781c-1.447 1.142-3.276 1.824-5.262 1.824-4.694 0-8.5-3.806-8.5-8.5z"></path></g>
+            </svg>
+            <span>Explore</span>
+        </div>
+        
+        <div class="nav-item">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <g><path d="M19.993 9.042C19.48 5.017 16.054 2 11.996 2s-7.49 3.021-7.999 7.051L2.866 18H7.1c.463 2.282 2.481 4 4.9 4s4.437-1.718 4.9-4h4.236l-1.143-8.958zM12 20c-1.306 0-2.417-.835-2.829-2h5.658c-.412 1.165-1.523 2-2.829 2zm-6.866-4l.847-6.698C6.364 6.272 8.941 4 11.996 4s5.627 2.268 6.013 5.295L18.864 16H5.134z"></path></g>
+            </svg>
+            <span>Notifications</span>
+        </div>
+        
+        <div class="nav-item">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <g><path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v2.764l8 3.638 8-3.636V5.5c0-.276-.224-.5-.5-.5h-15zm15.5 5.463l-8 3.636-8-3.638V18.5c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5v-8.037z"></path></g>
+            </svg>
+            <span>Messages</span>
+        </div>
+        
+        <div class="nav-item">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <g><path d="M12 7c-1.93 0-3.5 1.57-3.5 3.5S10.07 14 12 14s3.5-1.57 3.5-3.5S13.93 7 12 7zm0 5c-.827 0-1.5-.673-1.5-1.5S11.173 9 12 9s1.5.673 1.5 1.5S12.827 12 12 12zm0-10c-4.687 0-8.5 3.813-8.5 8.5 0 5.967 7.621 11.116 7.945 11.332l.555.37.555-.37c.324-.216 7.945-5.365 7.945-11.332C20.5 5.813 16.687 2 12 2zm0 17.77c-1.665-1.241-6.5-5.196-6.5-9.27C5.5 6.916 8.416 4 12 4s6.5 2.916 6.5 6.5c0 4.073-4.835 8.028-6.5 9.27z"></path></g>
+            </svg>
+            <span>Events</span>
+        </div>
+        
+        <div class="nav-item">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <g><path d="M7 4V3h2v1h6V3h2v1h1.5C19.89 4 21 5.12 21 6.5v12c0 1.38-1.11 2.5-2.5 2.5h-13C4.12 21 3 19.88 3 18.5v-12C3 5.12 4.12 4 5.5 4H7zm0 2H5.5c-.28 0-.5.22-.5.5v12c0 .28.22.5.5.5h13c.28 0 .5-.22.5-.5v-12c0-.28-.22-.5-.5-.5H17v1h-2V6H9v1H7V6z"></path></g>
+            </svg>
+            <span>Calendar</span>
+        </div>
+        
+        <div class="nav-item">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <g><path d="M7 4V3h2v1h6V3h2v1h1.5C19.89 4 21 5.12 21 6.5v12c0 1.38-1.11 2.5-2.5 2.5h-13C4.12 21 3 19.88 3 18.5v-12C3 5.12 4.12 4 5.5 4H7zm0 2H5.5c-.28 0-.5.22-.5.5v12c0 .28.22.5.5.5h13c.28 0 .5-.22.5-.5v-12c0-.28-.22-.5-.5-.5H17v1h-2V6H9v1H7V6z"></path></g>
+            </svg>
+            <span>Groups</span>
+        </div>
+        
+        <div class="nav-item">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <g><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 1.5c4.694 0 8.5 3.806 8.5 8.5 0 1.602-.443 3.105-1.215 4.39l-1.123-1.123a6.927 6.927 0 0 0 .588-3.267l-2.709-2.71a2.5 2.5 0 0 0-3.536 0L8.5 9.378V7.5h-1v2.829l-.854.853-2.353-2.353a8 8 0 0 1 1.707-1.707l1.586 1.586A2.5 2.5 0 0 0 12 6.5c.69 0 1.32.28 1.768.732l2.732 2.732a6.936 6.936 0 0 0-3.267.588l-1.123-1.123A8.02 8.02 0 0 1 12 3.5zm-6.5 8c0 1.602.443 3.105 1.215 4.39l1.123-1.123a6.927 6.927 0 0 1-.588-3.267l2.709-2.71a2.5 2.5 0 0 1 3.536 0L15.5 14.622v1.878h1v-2.829l.854-.853 2.353 2.353a8 8 0 0 1-1.707 1.707l-1.586-1.586a2.5 2.5 0 0 1-1.768.732c-.69 0-1.32-.28-1.768-.732l-2.732-2.732a6.936 6.936 0 0 1 3.267-.588l1.123 1.123A8.02 8.02 0 0 0 12 20.5c-4.694 0-8.5-3.806-8.5-8.5z"></path></g>
+            </svg>
+            <span>Audio Rooms</span>
+        </div>
+        
+        <div class="nav-item">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <g><path d="M3 5.5C3 4.119 4.119 3 5.5 3h13C19.881 3 21 4.119 21 5.5v13c0 1.381-1.119 2.5-2.5 2.5h-13C4.119 21 3 19.881 3 18.5v-13zM5.5 5c-.276 0-.5.224-.5.5v9.086l3-3 3 3 5-5 3 3V5.5c0-.276-.224-.5-.5-.5h-13zM19 15.414l-3-3-5 5-3-3-3 3V18.5c0 .276.224.5.5.5h13c.276 0 .5-.224.5-.5v-3.086zM9.75 7C8.784 7 8 7.784 8 8.75s.784 1.75 1.75 1.75 1.75-.784 1.75-1.75S10.716 7 9.75 7z"></path></g>
+            </svg>
+            <span>Stories</span>
+        </div>
+        
+        <button class="create-btn">
+            <span>Create</span>
+        </button>
+        
+        <button class="theme-toggle">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <g><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1-8.313-12.454z"></path></g>
+            </svg>
+            <span>Theme</span>
+        </button>
+        
+        <div class="user-profile">
+            <div class="user-avatar"></div>
+            <div class="user-info">
+                <div class="user-name">John Doe</div>
+                <div class="user-handle">@johndoe</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1>ConnectVerse</h1>
+            <div class="header-icons">
+                <svg class="header-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <g><path d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z"></path></g>
+                </svg>
+                <svg class="header-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <g><path d="M19.993 9.042C19.48 5.017 16.054 2 11.996 2s-7.49 3.021-7.999 7.051L2.866 18H7.1c.463 2.282 2.481 4 4.9 4s4.437-1.718 4.9-4h4.236l-1.143-8.958zM12 20c-1.306 0-2.417-.835-2.829-2h5.658c-.412 1.165-1.523 2-2.829 2zm-6.866-4l.847-6.698C6.364 6.272 8.941 4 11.996 4s5.627 2.268 6.013 5.295L18.864 16H5.134z"></path></g>
+                </svg>
+                <svg class="header-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <g><path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v2.764l8 3.638 8-3.636V5.5c0-.276-.224-.5-.5-.5h-15zm15.5 5.463l-8 3.636-8-3.638V18.5c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5v-8.037z"></path></g>
+                </svg>
+            </div>
+        </div>
+        
+        <!-- Stories - Instagram style -->
+        <div class="stories">
+            <div class="story">
+                <div class="story-avatar unseen" style="background-image: url('https://randomuser.me/api/portraits/women/44.jpg');"></div>
+                <div class="story-username">Your Story</div>
+            </div>
+            <div class="story">
+                <div class="story-avatar" style="background-image: url('https://randomuser.me/api/portraits/men/32.jpg');"></div>
+                <div class="story-username">techguru</div>
+            </div>
+            <div class="story">
+                <div class="story-avatar" style="background-image: url('https://randomuser.me/api/portraits/women/68.jpg');"></div>
+                <div class="story-username">traveler</div>
+            </div>
+            <div class="story">
+                <div class="story-avatar" style="background-image: url('https://randomuser.me/api/portraits/men/75.jpg');"></div>
+                <div class="story-username">foodlover</div>
+            </div>
+            <div class="story">
+                <div class="story-avatar" style="background-image: url('https://randomuser.me/api/portraits/women/90.jpg');"></div>
+                <div class="story-username">artist</div>
+            </div>
+            <div class="story">
+                <div class="story-avatar" style="background-image: url('https://randomuser.me/api/portraits/men/22.jpg');"></div>
+                <div class="story-username">musician</div>
+            </div>
+        </div>
+        
+        <!-- Create Post - Facebook style -->
+        <div class="create-post">
+            <div class="post-form">
+                <div class="post-avatar"></div>
+                <div class="post-input">
+                    <textarea placeholder="What's on your mind?"></textarea>
+                    <div class="post-options">
+                        <div class="post-icons">
+                            <div class="post-icon">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <g><path d="M3 5.5C3 4.119 4.119 3 5.5 3h13C19.881 3 21 4.119 21 5.5v13c0 1.381-1.119 2.5-2.5 2.5h-13C4.119 21 3 19.881 3 18.5v-13zM5.5 5c-.276 0-.5.224-.5.5v9.086l3-3 3 3 5-5 3 3V5.5c0-.276-.224-.5-.5-.5h-13zM19 15.414l-3-3-5 5-3-3-3 3V18.5c0 .276.224.5.5.5h13c.276 0 .5-.224.5-.5v-3.086zM9.75 7C8.784 7 8 7.784 8 8.75s.784 1.75 1.75 1.75 1.75-.784 1.75-1.75S10.716 7 9.75 7z"></path></g>
+                                </svg>
+                            </div>
+                            <div class="post-icon">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <g><path d="M3 5.5C3 4.119 4.12 3 5.5 3h13C19.88 3 21 4.119 21 5.5v13c0 1.381-1.12 2.5-2.5 2.5h-13C4.12 21 3 19.881 3 18.5v-13zM5.5 5c-.276 0-.5.224-.5.5v3.086l3-3L5.5 5zm6.5 6l-7 7h13.5c.276 0 .5-.224.5-.5v-13l-7 7zM8 8.5c0-.828.672-1.5 1.5-1.5s1.5.672 1.5 1.5S10.328 10 9.5 10 8 9.328 8 8.5z"></path></g>
+                                </svg>
+                            </div>
+                            <div class="post-icon">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <g><path d="M6 5c-1.1 0-2 .895-2 2s.9 2 2 2 2-.895 2-2-.9-2-2-2zM2 7c0-2.209 1.79-4 4-4s4 1.791 4 4-1.79 4-4 4-4-1.791-4-4zm20 1H12V6h10v2zM6 15c-1.1 0-2 .895-2 2s.9 2 2 2 2-.895 2-2-.9-2-2-2zm-4 2c0-2.209 1.79-4 4-4s4 1.791 4 4-1.79 4-4 4-4-1.791-4-4zm20 1H12v-2h10v2zM7 7c0 .552-.45 1-1 1s-1-.448-1-1 .45-1 1-1 1 .448 1 1z"></path></g>
+                                </svg>
+                            </div>
+                            <div class="post-icon">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <g><path d="M8 9.5C8 8.119 8.672 7 9.5 7S11 8.119 11 9.5 10.328 12 9.5 12 8 10.881 8 9.5zm6.5 2.5c.828 0 1.5-1.119 1.5-2.5S15.328 7 14.5 7 13 8.119 13 9.5s.672 2.5 1.5 2.5zM12 16c-2.224 0-3.021-2.227-3.051-2.316l-1.897.633c.05.15 1.271 3.684 4.949 3.684s4.898-3.533 4.949-3.684l-1.896-.638c-.033.095-.83 2.322-3.053 2.322zm10.25-4.001c0 5.652-4.598 10.25-10.25 10.25S1.75 17.652 1.75 12 6.348 1.75 12 1.75 22.25 6.348 22.25 12zm-2 0c0-4.549-3.701-8.25-8.25-8.25S3.75 7.451 3.75 12s3.701 8.25 8.25 8.25 8.25-3.701 8.25-8.25z"></path></g>
+                                </svg>
+                            </div>
+                            <div class="post-icon">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <g><path d="M6 3V2h2v1h6V2h2v1h1.5C18.88 3 21 5.12 21 6.5v2h-2v-2c0-.276-.22-.5-.5-.5H16v1h-2V5H8v1H6V5H4.5c-.28 0-.5.224-.5.5v12c0 .276.22.5.5.5h3v2h-3C3.12 20 2 18.881 2 17.5v-12C2 4.119 3.12 3 4.5 3H6zm9.5 8c-2.49 0-4.5 2.015-4.5 4.5s2.01 4.5 4.5 4.5 4.5-2.015 4.5-4.5-2.01-4.5-4.5-4.5zM9 15.5C9 11.91 11.91 9 15.5 9s6.5 2.91 6.5 6.5-2.91 6.5-6.5 6.5S9 19.09 9 15.5zm5.5-2.5h2v2.086l1.71 1.707-1.42 1.414-2.29-2.293V13z"></path></g>
+                                </svg>
+                            </div>
+                            <div class="post-icon">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <g><path d="M12 7c-1.93 0-3.5 1.57-3.5 3.5S10.07 14 12 14s3.5-1.57 3.5-3.5S13.93 7 12 7zm0 5c-.827 0-1.5-.673-1.5-1.5S11.173 9 12 9s1.5.673 1.5 1.5S12.827 12 12 12zm0-10c-4.687 0-8.5 3.813-8.5 8.5 0 5.967 7.621 11.116 7.945 11.332l.555.37.555-.37c.324-.216 7.945-5.365 7.945-11.332C20.5 5.813 16.687 2 12 2zm0 17.77c-1.665-1.241-6.5-5.196-6.5-9.27C5.5 6.916 8.416 4 12 4s6.5 2.916 6.5 6.5c0 4.073-4.835 8.028-6.5 9.27z"></path></g>
+                                </svg>
+                            </div>
+                        </div>
+                        <button class="post-submit">Post</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Posts Feed - Instagram style with Twitter elements -->
+        <div class="posts">
+            <!-- Post 1 - Image Post -->
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="post-avatar" style="background-image: url('https://randomuser.me/api/portraits/women/44.jpg');"></div>
+                    <div class="post-user">
+                        <div class="post-name">Tech Conference</div>
+                        <div class="post-location">San Francisco, CA</div>
+                    </div>
+                    <svg class="post-more" viewBox="0 0 24 24" aria-hidden="true">
+                        <g><path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path></g>
+                    </svg>
+                </div>
+                <div class="post-image" style="background-image: url('https://images.unsplash.com/photo-1505373877841-8d25f7d46678');"></div>
+                <div class="post-actions">
+                    <div class="post-action like">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <g><path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path></g>
+                        </svg>
+                    </div>
+                    <div class="post-action comment">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <g><path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"></path></g>
+                        </svg>
+                    </div>
+                    <div class="post-action share">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <g><path d="M12 2.59l5.7 5.7-1.41 1.42L13 6.41V16h-2V6.41l-3.3 3.3-1.41-1.42L12 2.59zM21 15l-.02 3.51c0 1.38-1.12 2.49-2.5 2.49H5.5C4.11 21 3 19.88 3 18.5V15h2v3.5c0 .28.22.5.5.5h12.98c.28 0 .5-.22.5-.5L19 15h2z"></path></g>
+                        </svg>
+                    </div>
+                    <div class="post-action save">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <g><path d="M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V4.5c0-.28-.224-.5-.5-.5h-11z"></path></g>
+                        </svg>
+                    </div>
+                </div>
+                <div class="post-likes">1,243 likes</div>
+                <div class="post-caption"><strong>techconf</strong> Join us for the biggest tech conference of the year! #TechConference2023 #Innovation</div>
+                <div class="post-comments">View all 124 comments</div>
+                <div class="post-time">2 HOURS AGO</div>
+                <div class="add-comment">
+                    <input type="text" class="comment-input" placeholder="Add a comment...">
+                    <span class="comment-post">Post</span>
+                </div>
+            </div>
+            
+            <!-- Post 2 - Video Post -->
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="post-avatar" style="background-image: url('https://randomuser.me/api/portraits/men/32.jpg');"></div>
+                    <div class="post-user">
+                        <div class="post-name">Music Producers</div>
+                        <div class="post-location">Global Community</div>
+                    </div>
+                    <svg class="post-more" viewBox="0 0 24 24" aria-hidden="true">
+                        <g><path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path></g>
+                    </svg>
+                </div>
+                <div class="post-video">
+                    <div class="video-play-button">
+                        <svg viewBox="0 0 24 24">
+                            <g><path d="M8 5v14l11-7z"></path></g>
+                        </svg>
+                    </div>
+                </div>
+                <div class="post-actions">
+                    <div class="post-action like">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <g><path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path></g>
+                        </svg>
+                    </div>
+                    <div class="post-action comment">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <g><path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"></path></g>
+                        </svg>
+                    </div>
+                    <div class="post-action share">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <g><path d="M12 2.59l5.7 5.7-1.41 1.42L13 6.41V16h-2V6.41l-3.3 3.3-1.41-1.42L12 2.59zM21 15l-.02 3.51c0 1.38-1.12 2.49-2.5 2.49H5.5C4.11 21 3 19.88 3 18.5V15h2v3.5c0 .28.22.5.5.5h12.98c.28 0 .5-.22.5-.5L19 15h2z"></path></g>
+                        </svg>
+                    </div>
+                    <div class="post-action save">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <g><path d="M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V4.5c0-.28-.224-.5-.5-.5h-11z"></path></g>
+                        </svg>
+                    </div>
+                </div>
+                <div class="post-likes">856 likes</div>
+                <div class="post-caption"><strong>musicpros</strong> LIVE NOW in our audio room: Discussing the future of music production with industry experts. Tap the link in bio to join! #MusicProduction #AudioRoom</div>
+                <div class="post-comments">View all 43 comments</div>
+                <div class="post-time">5 HOURS AGO</div>
+                <div class="add-comment">
+                    <input type="text" class="comment-input" placeholder="Add a comment...">
+                    <span class="comment-post">Post</span>
+                </div>
+            </div>
+            
+            <!-- Post 3 - Event Post -->
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="post-avatar" style="background-image: url('https://randomuser.me/api/portraits/women/68.jpg');"></div>
+                    <div class="post-user">
+                        <div class="post-name">Startup Founders</div>
+                        <div class="post-location">10,000 members</div>
+                    </div>
+                    <svg class="post-more" viewBox="0 0 24 24" aria-hidden="true">
+                        <g><path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path></g>
+                    </svg>
+                </div>
+                <div class="post-image" style="background-image: url('https://images.unsplash.com/photo-1522071820081-009f0129c71c');"></div>
+                <div class="post-actions">
+                    <div class="post-action like">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <g><path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path></g>
+                        </svg>
+                    </div>
+                    <div class="post-action comment">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <g><path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01zm8.005-6c-3.317 0-6.005 2.69-6.005 6 0 3.37 2.77 6.08 6.138 6.01l.351-.01h1.761v2.3l5.087-2.81c1.951-1.08 3.163-3.13 3.163-5.36 0-3.39-2.744-6.13-6.129-6.13H9.756z"></path></g>
+                        </svg>
+                    </div>
+                    <div class="post-action share">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <g><path d="M12 2.59l5.7 5.7-1.41 1.42L13 6.41V16h-2V6.41l-3.3 3.3-1.41-1.42L12 2.59zM21 15l-.02 3.51c0 1.38-1.12 2.49-2.5 2.49H5.5C4.11 21 3 19.88 3 18.5V15h2v3.5c0 .28.22.5.5.5h12.98c.28 0 .5-.22.5-.5L19 15h2z"></path></g>
+                        </svg>
+                    </div>
+                    <div class="post-action save">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <g><path d="M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V4.5c0-.28-.224-.5-.5-.5h-11z"></path></g>
+                        </svg>
+                    </div>
+                </div>
+                <div class="post-likes">1,102 likes</div>
+                <div class="post-caption"><strong>startupgroup</strong> We've hit 10,000 members! 🎉 Join our community of entrepreneurs to share knowledge, get advice, and find potential co-founders. #StartupLife #Entrepreneurship</div>
+                <div class="post-comments">View all 89 comments</div>
+                <div class="post-time">8 HOURS AGO</div>
+                <div class="add-comment">
+                    <input type="text" class="comment-input" placeholder="Add a comment...">
+                    <span class="comment-post">Post</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Right Sidebar -->
+    <div class="right-sidebar">
+        <div class="search-box">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <g><path d="M10.25 3.75c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.795 0 3.419-.726 4.596-1.904 1.178-1.177 1.904-2.801 1.904-4.596 0-3.59-2.91-6.5-6.5-6.5zm-8.5 6.5c0-4.694 3.806-8.5 8.5-8.5s8.5 3.806 8.5 8.5c0 1.986-.682 3.815-1.824 5.262l4.781 4.781-1.414 1.414-4.781-4.781c-1.447 1.142-3.276 1.824-5.262 1.824-4.694 0-8.5-3.806-8.5-8.5z"></path></g>
+            </svg>
+            <input type="text" placeholder="Search ConnectVerse">
+        </div>
+        
+        <!-- Audio Rooms - Clubhouse style -->
+        <div class="audio-rooms">
+            <div class="section-header">
+                <span>Live Audio Rooms</span>
+                <span class="see-all">See all</span>
+            </div>
+            <div class="room-item">
+                <div class="room-title">Tech Talk: AI Innovations</div>
+                <div class="room-participants">
+                    <div class="room-avatars">
+                        <div class="room-avatar"></div>
+                        <div class="room-avatar"></div>
+                        <div class="room-avatar"></div>
+                    </div>
+                    <div class="room-count">124 listening</div>
+                </div>
+                <div class="room-topic">Discussing the latest advancements in artificial intelligence</div>
+                <button class="join-button">Join Room</button>
+            </div>
+            <div class="room-item">
+                <div class="room-title">Music Producers Lounge</div>
+                <div class="room-participants">
+                    <div class="room-avatars">
+                        <div class="room-avatar"></div>
+                        <div class="room-avatar"></div>
+                        <div class="room-avatar"></div>
+                    </div>
+                    <div class="room-count">87 listening</div>
+                </div>
+                <div class="room-topic">Sharing tips and tricks for music production</div>
+                <button class="join-button">Join Room</button>
+            </div>
+        </div>
+        
+        <!-- Upcoming Events - Facebook style -->
+        <div class="events">
+            <div class="section-header">
+                <span>Upcoming Events</span>
+                <span class="see-all">See all</span>
+            </div>
+            <div class="event-item">
+                <div class="event-date">June 15, 2023 · 2:00 PM</div>
+                <div class="event-title">Startup Pitch Competition</div>
+                <div class="event-location">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <g><path d="M12 7c-1.93 0-3.5 1.57-3.5 3.5S10.07 14 12 14s3.5-1.57 3.5-3.5S13.93 7 12 7zm0 5c-.827 0-1.5-.673-1.5-1.5S11.173 9 12 9s1.5.673 1.5 1.5S12.827 12 12 12zm0-10c-4.687 0-8.5 3.813-8.5 8.5 0 5.967 7.621 11.116 7.945 11.332l.555.37.555-.37c.324-.216 7.945-5.365 7.945-11.332C20.5 5.813 16.687 2 12 2zm0 17.77c-1.665-1.241-6.5-5.196-6.5-9.27C5.5 6.916 8.416 4 12 4s6.5 2.916 6.5 6.5c0 4.073-4.835 8.028-6.5 9.27z"></path></g>
+                    </svg>
+                    <span>San Francisco, CA</span>
+                </div>
+                <div class="event-interested">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <g><path d="M7 4V3h2v1h6V3h2v1h1.5C19.89 4 21 5.12 21 6.5v12c0 1.38-1.11 2.5-2.5 2.5h-13C4.12 21 3 19.88 3 18.5v-12C3 5.12 4.12 4 5.5 4H7zm0 2H5.5c-.28 0-.5.22-.5.5v12c0 .28.22.5.5.5h13c.28 0 .5-.22.5-.5v-12c0-.28-.22-.5-.5-.5H17v1h-2V6H9v1H7V6z"></path></g>
+                    </svg>
+                    <span>245 interested · 78 going</span>
+                </div>
+            </div>
+            <div class="event-item">
+                <div class="event-date">June 20, 2023 · 7:00 PM</div>
+                <div class="event-title">Networking Mixer for Creatives</div>
+                <div class="event-location">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <g><path d="M12 7c-1.93 0-3.5 1.57-3.5 3.5S10.07 14 12 14s3.5-1.57 3.5-3.5S13.93 7 12 7zm0 5c-.827 0-1.5-.673-1.5-1.5S11.173 9 12 9s1.5.673 1.5 1.5S12.827 12 12 12zm0-10c-4.687 0-8.5 3.813-8.5 8.5 0 5.967 7.621 11.116 7.945 11.332l.555.37.555-.37c.324-.216 7.945-5.365 7.945-11.332C20.5 5.813 16.687 2 12 2zm0 17.77c-1.665-1.241-6.5-5.196-6.5-9.27C5.5 6.916 8.416 4 12 4s6.5 2.916 6.5 6.5c0 4.073-4.835 8.028-6.5 9.27z"></path></g>
+                    </svg>
+                    <span>New York, NY</span>
+                </div>
+                <div class="event-interested">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <g><path d="M7 4V3h2v1h6V3h2v1h1.5C19.89 4 21 5.12 21 6.5v12c0 1.38-1.11 2.5-2.5 2.5h-13C4.12 21 3 19.88 3 18.5v-12C3 5.12 4.12 4 5.5 4H7zm0 2H5.5c-.28 0-.5.22-.5.5v12c0 .28.22.5.5.5h13c.28 0 .5-.22.5-.5v-12c0-.28-.22-.5-.5-.5H17v1h-2V6H9v1H7V6z"></path></g>
+                    </svg>
+                    <span>189 interested · 42 going</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Who to follow - Twitter style -->
+        <div class="audio-rooms">
+            <div class="section-header">
+                <span>Who to follow</span>
+                <span class="see-all">See all</span>
+            </div>
+            <div class="follow-item">
+                <div class="follow-avatar" style="background-image: url('https://randomuser.me/api/portraits/men/22.jpg');"></div>
+                <div class="follow-info">
+                    <div class="follow-name">Tech Innovators</div>
+                    <div class="follow-username">@techinnovators</div>
+                </div>
+                <button class="follow-btn">Follow</button>
+            </div>
+            <div class="follow-item">
+                <div class="follow-avatar" style="background-image: url('https://randomuser.me/api/portraits/women/33.jpg');"></div>
+                <div class="follow-info">
+                    <div class="follow-name">Creative Minds</div>
+                    <div class="follow-username">@creativeminds</div>
+                </div>
+                <button class="follow-btn">Follow</button>
+            </div>
+            <div class="follow-item">
+                <div class="follow-avatar" style="background-image: url('https://randomuser.me/api/portraits/men/44.jpg');"></div>
+                <div class="follow-info">
+                    <div class="follow-name">Startup Founders</div>
+                    <div class="follow-username">@startupfounders</div>
+                </div>
+                <button class="follow-btn">Follow</button>
+            </div>
+        </div>
+        
+        <!-- Trending - Twitter style -->
+        <div class="audio-rooms">
+            <div class="section-header">
+                <span>Trending in your network</span>
+                <span class="see-all">See all</span>
+            </div>
+            <div class="trending-item">
+                <div class="trending-category">Technology · Trending</div>
+                <div class="trending-name">#AIRevolution</div>
+                <div class="trending-count">15.2K posts</div>
+            </div>
+            <div class="trending-item">
+                <div class="trending-category">Business · Trending</div>
+                <div class="trending-name">#RemoteWork</div>
+                <div class="trending-count">8.7K posts</div>
+            </div>
+            <div class="trending-item">
+                <div class="trending-category">Music · Trending</div>
+                <div class="trending-name">#NewAlbumDrop</div>
+                <div class="trending-count">5.3K posts</div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-links">
+                <div class="footer-link">Terms of Service</div>
+                <div class="footer-link">Privacy Policy</div>
+                <div class="footer-link">Cookie Policy</div>
+                <div class="footer-link">Accessibility</div>
+                <div class="footer-link">Ads info</div>
+                <div class="footer-link">More</div>
+            </div>
+            <div>© 2023 ConnectVerse</div>
+        </div>
+    </div>
+
+    <!-- Create Room Modal -->
+    <div class="modal" id="createRoomModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Create Audio Room</div>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="roomTitle">Room Title</label>
+                    <input type="text" id="roomTitle" placeholder="What's your room about?">
+                </div>
+                <div class="form-group">
+                    <label for="roomTopic">Topic</label>
+                    <select id="roomTopic">
+                        <option value="">Select a topic</option>
+                        <option value="technology">Technology</option>
+                        <option value="business">Business</option>
+                        <option value="arts">Arts & Culture</option>
+                        <option value="music">Music</option>
+                        <option value="education">Education</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="roomPrivacy">Privacy</label>
+                    <select id="roomPrivacy">
+                        <option value="public">Public - Anyone can join</option>
+                        <option value="private">Private - Only people you invite</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary">Cancel</button>
+                <button class="modal-btn primary">Create Room</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.querySelector('.theme-toggle');
+        themeToggle.addEventListener('click', function() {
+            document.body.classList.toggle('light-mode');
+            const isLightMode = document.body.classList.contains('light-mode');
+            themeToggle.querySelector('span').textContent = isLightMode ? 'Dark' : 'Light';
+            
+            // Save preference to localStorage
+            localStorage.setItem('theme', isLightMode ? 'light' : 'dark');
+        });
+        
+        // Check for saved theme preference
+        if (localStorage.getItem('theme') === 'light') {
+            document.body.classList.add('light-mode');
+            themeToggle.querySelector('span').textContent = 'Dark';
+        }
+        
+        // Enable/disable post button based on input
+        const postTextarea = document.querySelector('.create-post textarea');
+        const postSubmit = document.querySelector('.create-post .post-submit');
+        
+        postTextarea.addEventListener('input', function() {
+            if (this.value.trim().length > 0) {
+                postSubmit.classList.add('active');
+            } else {
+                postSubmit.classList.remove('active');
+            }
+        });
+        
+        // Enable/disable comment buttons
+        const commentInputs = document.querySelectorAll('.comment-input');
+        const commentPosts = document.querySelectorAll('.comment-post');
+        
+        commentInputs.forEach((input, index) => {
+            input.addEventListener('input', function() {
+                if (this.value.trim().length > 0) {
+                    commentPosts[index].classList.add('active');
+                } else {
+                    commentPosts[index].classList.remove('active');
+                }
+            });
+        });
+        
+        // Like button functionality
+        const likeButtons = document.querySelectorAll('.post-action.like');
+        likeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                this.classList.toggle('liked');
+                const likeCount = this.closest('.post-card').querySelector('.post-likes');
+                let count = parseInt(likeCount.textContent.replace(/\D/g, ''));
+                
+                if (this.classList.contains('liked')) {
+                    count++;
+                } else {
+                    count--;
+                }
+                
+                likeCount.textContent = count.toLocaleString() + ' likes';
+            });
+        });
+        
+        // Follow button functionality
+        const followButtons = document.querySelectorAll('.follow-btn');
+        followButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                if (this.textContent === 'Follow') {
+                    this.textContent = 'Following';
+                    this.style.backgroundColor = 'transparent';
+                    this.style.color = 'white';
+                    this.style.border = '1px solid var(--border-color)';
+                } else {
+                    this.textContent = 'Follow';
+                    this.style.backgroundColor = 'white';
+                    this.style.color = 'black';
+                    this.style.border = 'none';
+                }
+            });
+        });
+        
+        // Create Room Modal
+        const createBtn = document.querySelector('.create-btn');
+        const createRoomModal = document.getElementById('createRoomModal');
+        const closeModal = document.querySelector('.close-modal');
+        const modalSecondaryBtn = document.querySelector('.modal-btn.secondary');
+        
+        createBtn.addEventListener('click', function() {
+            createRoomModal.style.display = 'flex';
+        });
+        
+        closeModal.addEventListener('click', function() {
+            createRoomModal.style.display = 'none';
+        });
+        
+        modalSecondaryBtn.addEventListener('click', function() {
+            createRoomModal.style.display = 'none';
+        });
+        
+        // Click outside modal to close
+        window.addEventListener('click', function(event) {
+            if (event.target === createRoomModal) {
+                createRoomModal.style.display = 'none';
+            }
+        });
+        
+        // Join Room buttons
+        const joinButtons = document.querySelectorAll('.join-button');
+        joinButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                alert('Joining audio room: ' + this.closest('.room-item').querySelector('.room-title').textContent);
+            });
+        });
+        
+        // Video play buttons
+        const videoPlayButtons = document.querySelectorAll('.video-play-button');
+        videoPlayButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                alert('Playing video: ' + this.closest('.post-card').querySelector('.post-name').textContent);
+            });
+        });
+    </script>
+</body>
+</html>
