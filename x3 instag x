@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X Social Platform</title>
+    <style>
+        :root {
+            --background-color: #ffffff;
+            --text-color: #0f1419;
+            --secondary-text: #536471;
+            --border-color: #eff3f4;
+            --hover-bg: #f7f9f9;
+            --navbar-width: 275px;
+            --post-hover: #f7f7f7;
+            --primary-color: #000000;
+            --secondary-color: #1d9bf0;
+            --avatar-color: #ccc;
+            --stories-border: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+        }
+
+        .dark-mode {
+            --background-color: #000000;
+            --text-color: #e7e9ea;
+            --secondary-text: #71767b;
+            --border-color: #2f3336;
+            --hover-bg: #181818;
+            --post-hover: #080808;
+            --primary-color: #ffffff;
+            --secondary-color: #1d9bf0;
+            --avatar-color: #333;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: all 0.3s;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            width: var(--navbar-width);
+            border-right: 1px solid var(--border-color);
+            padding: 8px 12px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: width 0.3s;
+            background-color: var(--background-color);
+            z-index: 100;
+        }
+
+        .navbar.collapsed {
+            width: 88px;
+        }
+
+        .navbar.collapsed .nav-item-text,
+        .navbar.collapsed .logo-text,
+        .navbar.collapsed .post-button-text {
+            display: none;
+        }
+
+        .navbar.collapsed .nav-item,
+        .navbar.collapsed .theme-controls {
+            justify-content: center;
+        }
+
+        .navbar.collapsed .post-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            justify-content: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+        }
+
+        .logo-icon {
+            font-size: 28px;
+            color: var(--primary-color);
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: bold;
+            margin-left: 12px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-radius: 9999px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .nav-item:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .nav-item.active {
+            font-weight: bold;
+        }
+
+        .nav-item-icon {
+            font-size: 26px;
+            color: var(--text-color);
+        }
+
+        .nav-item-text {
+            margin-left: 16px;
+            font-size: 20px;
+        }
+
+        .post-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 9999px;
+            padding: 16px 32px;
+            font-size: 17px;
+            font-weight: bold;
+            margin-top: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: calc(100% - 24px);
+            transition: background-color 0.2s;
+        }
+
+        .post-button:hover {
+            background-color: color-mix(in srgb, var(--primary-color) 90%, black);
+        }
+
+        .theme-controls {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin: 16px 0;
+            gap: 10px;
+        }
+
+        #colorPicker {
+            width: 30px;
+            height: 30px;
+            border: none;
+            cursor: pointer;
+            background: none;
+            padding: 0;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--secondary-text);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: var(--text-color);
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--secondary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-radius: 9999px;
+            margin-top: auto;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            position: absolute;
+            bottom: 0;
+            width: calc(100% - 24px);
+        }
+
+        .user-profile:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--avatar-color);
+            overflow: hidden;
+        }
+
+        .user-info {
+            margin-left: 12px;
+        }
+
+        .user-name {
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .user-handle {
+            color: var(--secondary-text);
+            font-size: 15px;
+        }
+
+        .more-icon {
+            margin-left: auto;
+            color: var(--secondary-text);
+        }
+
+        .main-content {
+            margin-left: var(--navbar-width);
+            flex: 1;
+            transition: margin-left 0.3s;
+        }
+
+        .main-content.expanded {
+            margin-left: 88px;
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            background-color: rgba(var(--background-color), 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 10;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-left: 32px;
+        }
+
+        .header-icon {
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .feed {
+            max-width: 600px;
+            margin: 0 auto;
+            border-right: 1px solid var(--border-color);
+            border-left: 1px solid var(--border-color);
+        }
+
+        .post {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .post:hover {
+            background-color: var(--post-hover);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .post-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: var(--avatar-color);
+            margin-right: 12px;
+        }
+
+        .post-user {
+            font-weight: bold;
+            margin-right: 4px;
+        }
+
+        .post-handle {
+            color: var(--secondary-text);
+            margin-right: 4px;
+        }
+
+        .post-time {
+            color: var(--secondary-text);
+        }
+
+        .post-more {
+            margin-left: auto;
+            color: var(--secondary-text);
+        }
+
+        .post-content {
+            margin-left: 60px;
+            margin-bottom: 12px;
+        }
+
+        .post-image {
+            width: 100%;
+            border-radius: 16px;
+            margin-top: 12px;
+            border: 1px solid var(--border-color);
+            background-color: var(--hover-bg);
+            height: 300px;
+        }
+
+        .post-images-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 4px;
+            margin-top: 12px;
+            margin-left: 60px;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .post-images-grid img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-left: 60px;
+            margin-top: 12px;
+            color: var(--secondary-text);
+        }
+
+        .post-action {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .post-action-icon {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        .post-action-count {
+            font-size: 14px;
+        }
+
+        .right-sidebar {
+            width: 350px;
+            padding: 16px;
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            background-color: var(--background-color);
+        }
+
+        .search-bar {
+            position: sticky;
+            top: 0;
+            background-color: var(--background-color);
+            padding: 12px 0;
+            z-index: 5;
+        }
+
+        .search-container {
+            background-color: var(--hover-bg);
+            border-radius: 9999px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-icon {
+            color: var(--secondary-text);
+            margin-right: 12px;
+            font-size: 18px;
+        }
+
+        .search-input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-color);
+            font-size: 15px;
+            width: 100%;
+        }
+
+        .trending-section, .who-to-follow, .audio-rooms {
+            background-color: var(--hover-bg);
+            border-radius: 16px;
+            margin-top: 16px;
+            overflow: hidden;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            padding: 16px;
+        }
+
+        .trending-item, .follow-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .trending-item:hover, .follow-item:hover {
+            background-color: color-mix(in srgb, var(--hover-bg) 90%, var(--background-color));
+        }
+
+        .trending-category {
+            color: var(--secondary-text);
+            font-size: 13px;
+        }
+
+        .trending-name {
+            font-weight: bold;
+            margin-top: 2px;
+        }
+
+        .trending-count {
+            color: var(--secondary-text);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .follow-profile {
+            display: flex;
+            align-items: center;
+        }
+
+        .follow-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: var(--avatar-color);
+            margin-right: 12px;
+        }
+
+        .follow-info {
+            flex: 1;
+        }
+
+        .follow-name {
+            font-weight: bold;
+        }
+
+        .follow-handle {
+            color: var(--secondary-text);
+        }
+
+        .follow-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 9999px;
+            padding: 8px 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .audio-rooms {
+            padding: 16px;
+        }
+
+        .rooms-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .room-card {
+            background-color: var(--hover-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .room-card:hover {
+            transform: scale(1.03);
+        }
+
+        .room-image {
+            width: 100%;
+            height: 100px;
+            background-color: var(--avatar-color);
+            position: relative;
+        }
+
+        .room-live {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background-color: #ff0000;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .room-listeners {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .room-info {
+            padding: 12px;
+        }
+
+        .room-title {
+            font-weight: bold;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .room-host {
+            color: var(--secondary-text);
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .stories-container {
+            display: flex;
+            overflow-x: auto;
+            padding: 16px 0;
+            gap: 16px;
+            scrollbar-width: none;
+        }
+
+        .stories-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .story-circle {
+            width: 66px;
+            height: 66px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--stories-border);
+            padding: 2px;
+            flex-shrink: 0;
+        }
+
+        .story-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: var(--background-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .story-avatar {
+            width: 90%;
+            height: 90%;
+            border-radius: 50%;
+            background-color: var(--avatar-color);
+        }
+
+        .story-username {
+            font-size: 12px;
+            text-align: center;
+            margin-top: 4px;
+            width: 66px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .events-container {
+            padding: 16px;
+        }
+
+        .event-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .event-item:last-child {
+            border-bottom: none;
+        }
+
+        .event-date {
+            background-color: var(--hover-bg);
+            border-radius: 8px;
+            padding: 8px;
+            text-align: center;
+            margin-right: 12px;
+            min-width: 50px;
+        }
+
+        .event-month {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .event-day {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .event-info {
+            flex: 1;
+        }
+
+        .event-title {
+            font-weight: bold;
+        }
+
+        .event-location {
+            color: var(--secondary-text);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 1280px) {
+            .right-sidebar {
+                display: none;
+            }
+        }
+
+        @media (max-width: 1000px) {
+            .navbar {
+                width: 88px;
+            }
+            .navbar .nav-item-text,
+            .navbar .logo-text,
+            .navbar .post-button-text {
+                display: none;
+            }
+            .navbar .nav-item,
+            .navbar .theme-controls {
+                justify-content: center;
+            }
+            .navbar .post-button {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                justify-content: center;
+            }
+            .main-content {
+                margin-left: 88px;
+            }
+            .rooms-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .rooms-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .navbar {
+                display: none;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="navbar" id="navbar">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fab fa-x-twitter"></i>
+            </div>
+            <div class="logo-text">X</div>
+        </div>
+        <div class="nav-item active">
+            <div class="nav-item-icon">
+                <i class="fas fa-home"></i>
+            </div>
+            <div class="nav-item-text">Home</div>
+        </div>
+        <div class="nav-item">
+            <div class="nav-item-icon">
+                <i class="fas fa-hashtag"></i>
+            </div>
+            <div class="nav-item-text">Explore</div>
+        </div>
+        <div class="nav-item">
+            <div class="nav-item-icon">
+                <i class="fas fa-bell"></i>
+            </div>
+            <div class="nav-item-text">Notifications</div>
+        </div>
+        <div class="nav-item">
+            <div class="nav-item-icon">
+                <i class="fas fa-envelope"></i>
+            </div>
+            <div class="nav-item-text">Messages</div>
+        </div>
+        <div class="nav-item">
+            <div class="nav-item-icon">
+                <i class="fas fa-calendar-day"></i>
+            </div>
+            <div class="nav-item-text">Events</div>
+        </div>
+        <div class="nav-item">
+            <div class="nav-item-icon">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="nav-item-text">Calendar</div>
+        </div>
+        <div class="nav-item">
+            <div class="nav-item-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="nav-item-text">Groups</div>
+        </div>
+        <div class="nav-item">
+            <div class="nav-item-icon">
+                <i class="fas fa-microphone"></i>
+            </div>
+            <div class="nav-item-text">Audio Rooms</div>
+        </div>
+        <div class="nav-item">
+            <div class="nav-item-icon">
+                <i class="fas fa-camera"></i>
+            </div>
+            <div class="nav-item-text">Stories</div>
+        </div>
+        <button class="post-button">
+            <div class="post-button-icon">
+                <i class="fas fa-feather-alt"></i>
+            </div>
+            <div class="post-button-text">Post</div>
+        </button>
+        <div class="theme-controls">
+            <input type="color" id="colorPicker" value="#ffffff">
+            <label class="toggle-switch">
+                <input type="checkbox" id="darkModeToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="user-profile">
+            <div class="user-avatar"></div>
+            <div class="user-info">
+                <div class="user-name">John Doe</div>
+                <div class="user-handle">@johndoe</div>
+            </div>
+            <div class="more-icon">
+                <i class="fas fa-ellipsis-h"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content" id="mainContent">
+        <div class="header">
+            <div class="header-icon" id="toggleNavbar">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="header-title">Home</div>
+        </div>
+        <div class="feed">
+            <div class="stories-container">
+                <div class="story">
+                    <div class="story-circle">
+                        <div class="story-inner">
+                            <div class="story-avatar"></div>
+                        </div>
+                    </div>
+                    <div class="story-username">Your Story</div>
+                </div>
+                <div class="story">
+                    <div class="story-circle">
+                        <div class="story-inner">
+                            <div class="story-avatar"></div>
+                        </div>
+                    </div>
+                    <div class="story-username">elonmusk</div>
+                </div>
+                <div class="story">
+                    <div class="story-circle">
+                        <div class="story-inner">
+                            <div class="story-avatar"></div>
+                        </div>
+                    </div>
+                    <div class="story-username">NASA</div>
+                </div>
+                <div class="story">
+                    <div class="story-circle">
+                        <div class="story-inner">
+                            <div class="story-avatar"></div>
+                        </div>
+                    </div>
+                    <div class="story-username">BillGates</div>
+                </div>
+                <div class="story">
+                    <div class="story-circle">
+                        <div class="story-inner">
+                            <div class="story-avatar"></div>
+                        </div>
+                    </div>
+                    <div class="story-username">tim_cook</div>
+                </div>
+            </div>
+            
+            <div class="post">
+                <div class="post-header">
+                    <div class="post-avatar"></div>
+                    <div class="post-user">Elon Musk</div>
+                    <div class="post-handle">@elonmusk</div>
+                    <div class="post-time">· 2h</div>
+                    <div class="post-more">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                </div>
+                <div class="post-content">
+                    Just another day revolutionizing transportation and energy...
+                </div>
+                <div class="post-images-grid">
+                    <div class="post-image"></div>
+                    <div class="post-image"></div>
+                </div>
+                <div class="post-actions">
+                    <div class="post-action">
+                        <div class="post-action-icon">
+                            <i class="far fa-comment"></i>
+                        </div>
+                        <div class="post-action-count">324</div>
+                    </div>
+                    <div class="post-action">
+                        <div class="post-action-icon">
+                            <i class="fas fa-retweet"></i>
+                        </div>
+                        <div class="post-action-count">1.2K</div>
+                    </div>
+                    <div class="post-action">
+                        <div class="post-action-icon">
+                            <i class="far fa-heart"></i>
+                        </div>
+                        <div class="post-action-count">8.7K</div>
+                    </div>
+                    <div class="post-action">
+                        <div class="post-action-icon">
+                            <i class="fas fa-share"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="post">
+                <div class="post-header">
+                    <div class="post-avatar"></div>
+                    <div class="post-user">NASA</div>
+                    <div class="post-handle">@NASA</div>
+                    <div class="post-time">· 5h</div>
+                    <div class="post-more">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                </div>
+                <div class="post-content">
+                    Beautiful new images from the James Webb Space Telescope reveal never-before-seen details of galaxy NGC 5068.
+                </div>
+                <div class="post-image"></div>
+                <div class="post-actions">
+                    <div class="post-action">
+                        <div class="post-action-icon">
+                            <i class="far fa-comment"></i>
+                        </div>
+                        <div class="post-action-count">1.4K</div>
+                    </div>
+                    <div class="post-action">
+                        <div class="post-action-icon">
+                            <i class="fas fa-retweet"></i>
+                        </div>
+                        <div class="post-action-count">4.2K</div>
+                    </div>
+                    <div class="post-action">
+                        <div class="post-action-icon">
+                            <i class="far fa-heart"></i>
+                        </div>
+                        <div class="post-action-count">32.8K</div>
+                    </div>
+                    <div class="post-action">
+                        <div class="post-action-icon">
+                            <i class="fas fa-share"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-title" style="padding: 16px;">Live Audio Rooms</div>
+            <div class="rooms-grid">
+                <div class="room-card">
+                    <div class="room-image">
+                        <div class="room-live">LIVE</div>
+                        <div class="room-listeners">1.2K listening</div>
+                    </div>
+                    <div class="room-info">
+                        <div class="room-title">Tech Talk: Future of AI</div>
+                        <div class="room-host">@elonmusk, @sama</div>
+                    </div>
+                </div>
+                <div class="room-card">
+                    <div class="room-image">
+                        <div class="room-live">LIVE</div>
+                        <div class="room-listeners">856 listening</div>
+                    </div>
+                    <div class="room-info">
+                        <div class="room-title">Music Producers Live</div>
+                        <div class="room-host">@diplo, @skrillex</div>
+                    </div>
+                </div>
+                <div class="room-card">
+                    <div class="room-image">
+                        <div class="room-live">LIVE</div>
+                        <div class="room-listeners">432 listening</div>
+                    </div>
+                    <div class="room-info">
+                        <div class="room-title">Startup Funding Tips</div>
+                        <div class="room-host">@pmarca, @naval</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="events-container">
+                <div class="section-title">Upcoming Events</div>
+                <div class="event-item">
+                    <div class="event-date">
+                        <div class="event-month">JUN</div>
+                        <div class="event-day">15</div>
+                    </div>
+                    <div class="event-info">
+                        <div class="event-title">Tech Conference 2023</div>
+                        <div class="event-location">San Francisco, CA</div>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-date">
+                        <div class="event-month">JUL</div>
+                        <div class="event-day">22</div>
+                    </div>
+                    <div class="event-info">
+                        <div class="event-title">AI Summit</div>
+                        <div class="event-location">Online Event</div>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-date">
+                        <div class="event-month">AUG</div>
+                        <div class="event-day">05</div>
+                    </div>
+                    <div class="event-info">
+                        <div class="event-title">Developer Meetup</div>
+                        <div class="event-location">New York, NY</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="right-sidebar">
+        <div class="search-bar">
+            <div class="search-container">
+                <div class="search-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <input type="text" class="search-input" placeholder="Search X">
+            </div>
+        </div>
+        <div class="trending-section">
+            <div class="section-title">Trends for you</div>
+            <div class="trending-item">
+                <div class="trending-category">Technology · Trending</div>
+                <div class="trending-name">#AIRevolution</div>
+                <div class="trending-count">125K posts</div>
+            </div>
+            <div class="trending-item">
+                <div class="trending-category">Sports · Trending</div>
+                <div class="trending-name">World Cup</div>
+                <div class="trending-count">342K posts</div>
+            </div>
+            <div class="trending-item">
+                <div class="trending-category">Politics · Trending</div>
+                <div class="trending-name">Election 2024</div>
+                <div class="trending-count">89K posts</div>
+            </div>
+            <div class="trending-item">
+                <div class="trending-category">Entertainment · Trending</div>
+                <div class="trending-name">New Movie Release</div>
+                <div class="trending-count">56K posts</div>
+            </div>
+        </div>
+        <div class="who-to-follow">
+            <div class="section-title">Who to follow</div>
+            <div class="follow-item">
+                <div class="follow-profile">
+                    <div class="follow-avatar"></div>
+                    <div class="follow-info">
+                        <div class="follow-name">Bill Gates</div>
+                        <div class="follow-handle">@BillGates</div>
+                    </div>
+                    <button class="follow-button">Follow</button>
+                </div>
+            </div>
+            <div class="follow-item">
+                <div class="follow-profile">
+                    <div class="follow-avatar"></div>
+                    <div class="follow-info">
+                        <div class="follow-name">Tim Cook</div>
+                        <div class="follow-handle">@tim_cook</div>
+                    </div>
+                    <button class="follow-button">Follow</button>
+                </div>
+            </div>
+            <div class="follow-item">
+                <div class="follow-profile">
+                    <div class="follow-avatar"></div>
+                    <div class="follow-info">
+                        <div class="follow-name">Satya Nadella</div>
+                        <div class="follow-handle">@satyanadella</div>
+                    </div>
+                    <button class="follow-button">Follow</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        darkModeToggle.addEventListener('change', function() {
+            document.body.classList.toggle('dark-mode', this.checked);
+            updateBackgroundColor();
+            localStorage.setItem('darkMode', this.checked);
+        });
+
+        // Check for saved dark mode preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            darkModeToggle.checked = true;
+        }
+
+        // Navbar toggle
+        const toggleNavbar = document.getElementById('toggleNavbar');
+        const navbar = document.getElementById('navbar');
+        const mainContent = document.getElementById('mainContent');
+
+        toggleNavbar.addEventListener('click', function() {
+            navbar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+        });
+
+        // Color picker
+        const colorPicker = document.getElementById('colorPicker');
+        colorPicker.addEventListener('change', function() {
+            const color = this.value;
+            document.documentElement.style.setProperty('--background-color', color);
+            localStorage.setItem('backgroundColor', color);
+        });
+
+        // Check for saved color preference
+        const savedColor = localStorage.getItem('backgroundColor');
+        if (savedColor) {
+            colorPicker.value = savedColor;
+            document.documentElement.style.setProperty('--background-color', savedColor);
+        }
+
+        // Update background color while preserving container colors
+        function updateBackgroundColor() {
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            const savedColor = localStorage.getItem('backgroundColor');
+            if (savedColor) {
+                document.documentElement.style.setProperty('--background-color', savedColor);
+            } else {
+                document.documentElement.style.setProperty('--background-color', isDarkMode ? '#000000' : '#ffffff');
+            }
+        }
+
+        // Initial setup
+        updateBackgroundColor();
+        
+        // Simulate story click
+        document.querySelectorAll('.story').forEach(story => {
+            story.addEventListener('click', function() {
+                alert('Viewing story: ' + this.querySelector('.story-username').textContent);
+            });
+        });
+        
+        // Simulate room click
+        document.querySelectorAll('.room-card').forEach(room => {
+            room.addEventListener('click', function() {
+                alert('Joining room: ' + this.querySelector('.room-title').textContent);
+            });
+        });
+    </script>
+</body>
+</html>
